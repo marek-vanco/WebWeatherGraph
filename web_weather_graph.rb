@@ -1,6 +1,8 @@
 require 'sinatra'
 
 DATA_DIR='data/'
+URLBASE='http://www.worldweatheronline.com'
+
 
 class WebWeatherGraph < Sinatra::Base
 	set :static, true
@@ -14,9 +16,17 @@ end
 
 class WeatherData
 
+	attr_accessor :locality
 	attr_accessor :observation_time, :cloudcover, :humidity, :precip_mm, :presure, :temp_c, :temp_f, :visibility, :weather_code, :weather_desc, 
 								:weather_icon_url, :winddir_16_point, :winddir_degree, :windspeed_kmph, :windspeed_miles 
 
+	private
+	  # Define a correct filename from location name
+		def normalize_locality(locality)
+		  return locality.gsub!(/[^0-9A-Za-z.\-]/, ',')
+		end
+
+	public
 	def initialize(locality)
 		  file=File.new(DATA_DIR+locality,"r")
 			data=file.gets.split("\t")
@@ -31,18 +41,17 @@ class WeatherData
 			@visibility=data[8]
 			@weather_code=data[1]
 	#		@weather_desc=data
-			@weather_icon_url=data[13]
+			p @weather_icon_url=data[13][0..-2]
 			@winddir_16_point=data[9]
 			@winddir_degree=data[10]
 			@windspeed_kmph=data[11]
 			@windspeed_miles=data[12]
-	file.close
+
+			@locality=normalize_locality(locality)
+			file.close
 	end
 
 end
-
-
-
 
 
 # get '/named_via_params/:argument' do
