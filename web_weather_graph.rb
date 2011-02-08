@@ -6,6 +6,7 @@ URLBASE='http://www.worldweatheronline.com'
 
 class WebWeatherGraph < Sinatra::Base
 	set :static, true
+	set :logging, true
 	set :public, File.dirname(__FILE__)+'/static'
 
 	get '/' do
@@ -27,9 +28,11 @@ class WeatherData
 		end
 
 	public
+	
+	# Read all lines with last residual value
 	def initialize(locality)
-		  file=File.new(DATA_DIR+locality,"r")
-			data=file.gets.split("\t")
+		File.open(DATA_DIR+locality,"r").each do |line|
+			data=line.split("\t")
 
 			@observation_time=data[0]
 			@cloudcover=data[7]
@@ -40,17 +43,15 @@ class WeatherData
 			@temp_f=data[3]
 			@visibility=data[8]
 			@weather_code=data[1]
-	#		@weather_desc=data
-			p @weather_icon_url=data[13][0..-2]
+			@weather_desc=data
+			@weather_icon_url=data[13][0..-2]
 			@winddir_16_point=data[9]
 			@winddir_degree=data[10]
 			@windspeed_kmph=data[11]
 			@windspeed_miles=data[12]
-
-			@locality=normalize_locality(locality)
-			file.close
+		end
+		@locality=normalize_locality(locality)
 	end
-
 end
 
 

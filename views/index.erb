@@ -4,16 +4,21 @@
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 		<title> World Weather Graph </title>
-		<link rel='stylesheet' href='/css/legend.css' type='text/css' media="screen, projection">
-		<link rel='stylesheet' href='/css/syntax.css' type='text/css' media="screen, projection">
-		<link rel='stylesheet' href='/css/print.css' type='text/css' media="print">
+		<link rel='stylesheet' href='/styles/simple.css' type='text/css' media="screen, projection">
+		<link rel='stylesheet' href='/styles/print.css' type='text/css' media="print">
 		<link rel='shortcut icon' href='/images/favicon.ico'>
 	</head>
 
 	<body>
 	<h1><%= Trencin.locality %></h1>
-	<table>
-	<tr><th>Physical value</th><th>value</th></tr>
+	<div class="temperature">
+  <table class="temperature">
+		<tr><td class="temperature"><b><%= Trencin.temp_c %>°C</b></td><td class="temperature"><img src="./styles/icons/wwo/<%= Trencin.weather_icon_url%>" alt="<%= Trencin.weather_code %>" /></td></tr>
+	</table>
+	</div>
+	<table class="tablemain">
+	<tr><th class="tablemain">PHYSICAL VALUE</th><th class="tablemain">VALUE</th></tr>
+	<tr><td>Time:</td><td><%= Trencin.observation_time %></td></tr>
 	<tr><td>Temperature:</td><td><%= Trencin.temp_c %>°C</td></tr>
 	<tr><td>Cloudcover:</td><td><%= Trencin.cloudcover %></td></tr>
 	<tr><td>Humidity:</td><td><%= Trencin.humidity %></td></tr>
@@ -22,7 +27,6 @@
 	<tr><td>Speed of wind:</td><td><%= Trencin.windspeed_kmph %> km/h</td></tr>
 	<tr><td>Direction du vent:</td><td><%= Trencin.winddir_degree %>°</td></tr>
 	</table>
-	<img src="./styles/icons/wwo/<%= Trencin.weather_icon_url%>" alt="<%= Trencin.weather_code %>" /><br />
 	<a href=<%= URLBASE %>> Data from <%= URLBASE %></a> 
 	</body>
 </html>
