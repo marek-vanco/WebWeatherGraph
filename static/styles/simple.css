@@ -6,30 +6,56 @@ body {
 	background-repeat:repeat-x;
 }
 
-td.temperature {
-	padding:15px;
+input {
+	
 }
 
-table.temperature {
+.locality_form {
+	position:relative;
+	padding:10px;
+	width:200px;
+	background-color:#FFFFFF;
+}
+
+.div_temperature {
+	position:absolute;
+	top:0px;
+	right:0px;
+	padding:20px;
 	font-family:"Times New Roman",serif;
-	font-size:60px;
 	font-style:italic;
 	border-collapse:collapse;
 }
 
+#big_temp {
+	font-size:60px;
+}
+
+.div_tablemain {
+	position:absolute;
+	top:60px;
+	right:20px;
+}
 
 
 table.tablemain  {
-			border-collapse:collapse;
-			border: 1px solid black;
-			background-color:white;
+	border-collapse:collapse;
+	border: 1px solid black;
+	background-color:white;
 }
 
 td.tablemain	{
-			vertical-align:middle;
+	vertical-align:middle;
 }
 
 th.tablemain	{
-			text-align:left;
-			background-color:yellow
+	text-align:left;
+	background-color:yellow
 }
+
+.bottom {
+	padding:15px;
+	font-size:10px;
+}
+
+

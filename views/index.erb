@@ -10,23 +10,37 @@
 	</head>
 
 	<body>
-	<h1><%= Trencin.locality %></h1>
-	<div class="temperature">
-  <table class="temperature">
-		<tr><td class="temperature"><b><%= Trencin.temp_c %>°C</b></td><td class="temperature"><img src="./styles/icons/wwo/<%= Trencin.weather_icon_url%>" alt="<%= Trencin.weather_code %>" /></td></tr>
+	<h1></h1>
+
+	<div class="div_locality_form" align="left">
+		<form method="post" action="/get_localities"> 
+			Search locality: <input type="text" name="query" /><input type="submit" value="Search" />
+		</form>
+	</div>
+
+	<div class="div_temperature">
+	<table>
+		<tr><td id="big_temp"><b><%= Weather.temp_c %>°C</b></td><td><img src="./styles/icons/wwo/<%= Weather.weather_icon_url%>" alt="<%= Weather.weather_code %>" /></td></tr>
 	</table>
 	</div>
-	<table class="tablemain">
-	<tr><th class="tablemain">PHYSICAL VALUE</th><th class="tablemain">VALUE</th></tr>
-	<tr><td>Time:</td><td><%= Trencin.observation_time %></td></tr>
-	<tr><td>Temperature:</td><td><%= Trencin.temp_c %>°C</td></tr>
-	<tr><td>Cloudcover:</td><td><%= Trencin.cloudcover %></td></tr>
-	<tr><td>Humidity:</td><td><%= Trencin.humidity %></td></tr>
-	<tr><td>Precipitation:</td><td><%= Trencin.precip_mm %> mm*m<sup>-2</sup></td></tr>
-	<tr><td>Visibility:</td><td><%= Trencin.visibility %> km</td></tr>
-	<tr><td>Speed of wind:</td><td><%= Trencin.windspeed_kmph %> km/h</td></tr>
-	<tr><td>Direction du vent:</td><td><%= Trencin.winddir_degree %>°</td></tr>
-	</table>
-	<a href=<%= URLBASE %>> Data from <%= URLBASE %></a> 
+	
+	<div class="div_tabmain" align="right">
+		<table class="tablemain">
+			<tr><th class="tablemain">PHYSICAL VALUE</th><th class="tablemain">VALUE</th></tr>
+			<tr><td>Time:</td><td><%= Weather.observation_time %></td></tr>
+			<tr><td>Temperature:</td><td><%= Weather.temp_c %>°C</td></tr>
+			<tr><td>Cloudcover:</td><td><%= Weather.cloudcover %></td></tr>
+			<tr><td>Humidity:</td><td><%= Weather.humidity %></td></tr>
+			<tr><td>Precipitation:</td><td><%= Weather.precip_mm %> mm*m<sup>-2</sup></td></tr>
+			<tr><td>Visibility:</td><td><%= Weather.visibility %> km</td></tr>
+			<tr><td>Speed of wind:</td><td><%= Weather.windspeed_kmph %> km/h</td></tr>
+			<tr><td>Direction du vent:</td><td><%= Weather.winddir_degree %>°</td></tr>
+		</table>
+	</div>
+
+	<div class="bottom" align="center">
+  	<a href=<%= URLBASE %>> Data from <%= URLBASE %></a> 
+	</div>
+
 	</body>
 </html>
