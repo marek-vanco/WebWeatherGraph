@@ -1,0 +1,19 @@
+<!DOCTYPE xhtml>
+
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title> World weather.Graph </title>
+    <link rel='stylesheet' href='/styles/simple.css' type='text/css' media="screen, projection">
+    <link rel='stylesheet' href='/styles/print.css' type='text/css' media="print">
+    <link rel='shortcut icon' href='/images/favicon.ico'>
+  </head>
+  <body>
+   <form method="post" action "/">
+   <% @localities.each { |item|%>
+      <input type="radio" name="locality" value="<%= item["areaName"][0]["value"] %>,<%= item["country"][0]["value"]%>" /><%= item["areaName"][0]["value"] %>,<%= item["country"][0]["value"]%><br />
+   <%   }  %>
+   <input type="submit" value="Submit" />
+   </form>
+  </body>
+</html>

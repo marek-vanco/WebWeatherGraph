@@ -1,46 +1,47 @@
 <!DOCTYPE xhtml>
 
 <html>
-	<head>
-		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-		<title> World Weather Graph </title>
-		<link rel='stylesheet' href='/styles/simple.css' type='text/css' media="screen, projection">
-		<link rel='stylesheet' href='/styles/print.css' type='text/css' media="print">
-		<link rel='shortcut icon' href='/images/favicon.ico'>
-	</head>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title> World weather.Graph </title>
+    <link rel='stylesheet' href='/styles/simple.css' type='text/css' media="screen, projection">
+    <link rel='stylesheet' href='/styles/print.css' type='text/css' media="print">
+    <link rel='shortcut icon' href='/images/favicon.ico'>
+  </head>
 
-	<body>
-	<h1></h1>
+  <body>
+  <h1></h1>
 
-	<div class="div_locality_form" align="left">
-		<form method="post" action="/get_localities"> 
-			Search locality: <input type="text" name="query" /><input type="submit" value="Search" />
-		</form>
-	</div>
+  <div class="div_locality_form" align="left">
+    <form method="post" action="/get_localities"> 
+      Search locality: <input type="text" name="query" /><input type="submit" value="Search" />
+    </form>
+  </div>
 
-	<div class="div_temperature">
-	<table>
-		<tr><td id="big_temp"><b><%= Weather.temp_c %>°C</b></td><td><img src="./styles/icons/wwo/<%= Weather.weather_icon_url%>" alt="<%= Weather.weather_code %>" /></td></tr>
-	</table>
-	</div>
-	
-	<div class="div_tabmain" align="right">
-		<table class="tablemain">
-			<tr><th class="tablemain">PHYSICAL VALUE</th><th class="tablemain">VALUE</th></tr>
-			<tr><td>Time:</td><td><%= Weather.observation_time %></td></tr>
-			<tr><td>Temperature:</td><td><%= Weather.temp_c %>°C</td></tr>
-			<tr><td>Cloudcover:</td><td><%= Weather.cloudcover %></td></tr>
-			<tr><td>Humidity:</td><td><%= Weather.humidity %></td></tr>
-			<tr><td>Precipitation:</td><td><%= Weather.precip_mm %> mm*m<sup>-2</sup></td></tr>
-			<tr><td>Visibility:</td><td><%= Weather.visibility %> km</td></tr>
-			<tr><td>Speed of wind:</td><td><%= Weather.windspeed_kmph %> km/h</td></tr>
-			<tr><td>Direction du vent:</td><td><%= Weather.winddir_degree %>°</td></tr>
-		</table>
-	</div>
+  <div class="div_temperature">
+  <table>
+    <tr><td id="big_temp"><b><%= @weather.temp_c %>°C</b>
+    </td><td><img src="./styles/icons/wwo/<%= @weather.weather_icon_url%>" alt="<%= @weather.weather_code %>" /></td></tr>
+  </table>
+  </div>
+  
+  <div class="div_tabmain" align="right">
+    <table class="tablemain">
+      <tr><th class="tablemain">PHYSICAL VALUE</th><th class="tablemain">VALUE</th></tr>
+      <tr><td>Time:</td><td><%= @weather.observation_time %></td></tr>
+      <tr><td>Temperature:</td><td><%= @weather.temp_c %>°C</td></tr>
+      <tr><td>Cloudcover:</td><td><%= @weather.cloudcover %></td></tr>
+      <tr><td>Humidity:</td><td><%= @weather.humidity %></td></tr>
+      <tr><td>Precipitation:</td><td><%= @weather.precip_mm %> mm*m<sup>-2</sup></td></tr>
+      <tr><td>Visibility:</td><td><%= @weather.visibility %> km</td></tr>
+      <tr><td>Speed of wind:</td><td><%= @weather.windspeed_kmph %> km/h</td></tr>
+      <tr><td>Direction du vent:</td><td><%= @weather.winddir_degree %>°</td></tr>
+    </table>
+  </div>
 
-	<div class="bottom" align="center">
-  	<a href=<%= URLBASE %>> Data from <%= URLBASE %></a> 
-	</div>
+  <div class="bottom" align="center">
+    <a href=<%= URLBASE %>> Data from <%= URLBASE %></a> 
+  </div>
 
-	</body>
+  </body>
 </html>
