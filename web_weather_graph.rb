@@ -16,7 +16,7 @@ class WeatherData
   private
     # Define a correct filename from location name
     def normalize_locality(locality)
-      return locality.gsub!(/[^0-9A-Za-z.\-]/, ',')
+      return locality.gsub!(/[^0-9A-Za-z.\-]/, '_')
     end
 
   public
@@ -40,7 +40,7 @@ class WeatherData
 
     # Read all lines with last residual value
     def get_data(locality)
-      File.open(DATA_DIR+locality,"r").each do |line|
+      File.open(DATA_DIR+normalize_locality(locality),"r").each do |line|
         data = line.split("\t")
 
         @observation_time = data[0]
@@ -88,11 +88,18 @@ class WebWeatherGraph < Sinatra::Base
   set :views, File.dirname(__FILE__) + '/views'
 
   before do
-    locality = "Trencin, Slovakia" 
     @weather = WeatherData.new
   end
 
-  get '/' do
+  get '/' do  
+      if params[:locality] == nil 
+        locality = "Trencin,Slovakia" 
+      else
+        locality = params[:locality]
+      end
+      p locality
+      @weather.get_data(locality)
+
     erb :index
   end
 
