@@ -2,11 +2,14 @@ require 'sinatra'
 require 'open-uri'
 require 'json'
 require 'erb'
+require 'parseconfig'
 
-DATA_DIR = 'data/'
+config = ParseConfig.new('./web_weather_graph.conf')
+KEY = config.params['datasource']['key']
+DATA_DIR = config.params['weather_graph']['datadir']
+
 URLBASE = 'http://www.worldweatheronline.com'
 FORMAT = 'json'
-KEY = '31cedb71bb220950113101'
 
 class WeatherData
   attr_accessor :locality
