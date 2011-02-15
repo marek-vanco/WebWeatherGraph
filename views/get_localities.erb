@@ -9,10 +9,10 @@
     <link rel='shortcut icon' href='/images/favicon.ico'>
   </head>
   <body>
-   <form method="post" action "/">
+   <form method="post" action "select_locality">
    <% @localities.each { |item|%>
-      <p> <%= item %> </p>
-      <input type="radio" name="locality" value="<%= item["areaName"][0]["value"] %>, <%= item["country"][0]["value"]%>" /><%= item["areaName"][0]["value"] %>, <%= item["country"][0]["value"]%>,  <br />
+<!-- <p> <%= item %> </p>-->
+      <input type="radio" name="loc" value="" /><%= item["areaName"][0]["value"] %>, <%= item["country"][0]["value"]%>, LAT:<%= item["latitude"]%>, LON:<%= item["longitude"]%>"<input type="hidden" name="locality" value="<%= item %>" /><br />
    <%   }  %>
    <input type="submit" value="Submit" />
    </form>
