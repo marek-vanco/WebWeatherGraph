@@ -4,6 +4,7 @@ require 'json'
 require 'erb'
 require 'parseconfig'
 require 'yaml'
+require 'cgi'
 
 config = ParseConfig.new('./web_weather_graph.conf')
 KEY = config.params['datasource']['key']
@@ -69,7 +70,8 @@ class WeatherData
 
     # return hash of localities matches with query
     def get_localities(query)
-      @url = "#{URLBASE}/feed/search.ashx?key=#{KEY}&q=#{query}&format=#{FORMAT}&num_of_days=2"
+      p query_escaped = CGI::escape(query)
+      @url = "#{URLBASE}/feed/search.ashx?key=#{KEY}&q=#{query_escaped}&format=#{FORMAT}&num_of_days=2"
 
       rawdata = ''
       open(@url).each do |line|

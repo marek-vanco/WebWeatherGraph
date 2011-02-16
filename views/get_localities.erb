@@ -12,7 +12,7 @@
    <form method="post" action "select_locality">
    <% @localities.each { |item|%>
 <!-- <p> <%= item %> </p>-->
-      <input type="radio" name="loc" value="" /><%= item["areaName"][0]["value"] %>, <%= item["country"][0]["value"]%>, LAT:<%= item["latitude"]%>, LON:<%= item["longitude"]%>"<input type="hidden" name="locality" value="<%= item %>" /><br />
+      <input type="radio" name="loc" value="" /><%= item["areaName"][0]["value"] %>, <%= item["country"][0]["value"]%>, LAT:<%= item["latitude"]%>, LON:<%= item["longitude"]%> <br />
    <%   }  %>
    <input type="submit" value="Submit" />
    </form>
