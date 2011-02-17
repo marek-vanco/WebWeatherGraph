@@ -3,6 +3,8 @@
 require 'rubygems'
 require 'open-uri'
 require 'json'
+require 'cgi'
+require 'rrd'
 
 KEY = '31cedb71bb220950113101'
 FORMAT = 'json'
@@ -11,7 +13,8 @@ DATA_DIR = "data/"
 
 class Collector
 
-  attr_accessor :locality, :url, :localtime
+  attr_accessor :rrd
+  attr_accessor :locality, :url, :local_time 
   attr_accessor :observation_time, :cloudcover, :humidity, :precip_mm, :presure, :temp_c, :temp_f, :visibility, :weather_code, :weather_desc, 
                 :weather_icon_url, :winddir_16_point, :winddir_degree, :windspeed_kmph, :windspeed_miles 
   attr_accessor :date, :temp_max_c, :temp_max_f, :temp_min_c, :temp_min_f, :day_weather_code, :day_weather_desc, :day_weather_icon_url, 
@@ -19,7 +22,8 @@ class Collector
 
   def initialize(locality)
     @locality = locality
-    @url = "#{URLBASE}/feed/weather.ashx?key = #{KEY}&q = #{locality}&format = #{FORMAT}&num_of_days = 2"
+    query_escaped = CGI::escape(locality)
+    @url = "#{URLBASE}/feed/weather.ashx?key=#{KEY}&q=#{query_escaped}&format=#{FORMAT}&num_of_days=2"
   end
 
   private
@@ -37,7 +41,7 @@ class Collector
       mounth = date[5..6]
       day = date[8..9]
       
-      if ampm =  = 'P' 
+      if ampm == 'P' 
         hour = @observation_time[0..1].to_i
         hour = hour+12
       end
@@ -63,7 +67,7 @@ class Collector
     @cloudcover = data["data"]["current_condition"][0]["cloudcover"]
     @humidity = data["data"]["current_condition"][0]["humidity"]
     @precip_mm = data["data"]["current_condition"][0]["precipMM"]
-    @presure = data["data"]["current_condition"][0]["pressure"]
+    @pressure = data["data"]["current_condition"][0]["pressure"]
     @temp_c = data["data"]["current_condition"][0]["temp_C"]
     @temp_f = data["data"]["current_condition"][0]["temp_F"]
     @visibility = data["data"]["current_condition"][0]["visibility"]
@@ -93,12 +97,31 @@ class Collector
     @weather_icon_url = normalize_weather_icon_url
   end
 
-  def save_values
+  def save_values_to_file
     p dataline = "#{@observation_time}\t#{weather_code}\t#{temp_c}\t#{temp_f}\t#{humidity}\t#{presure}\t#{precip_mm}\t#{cloudcover}\t#{visibility}\t#{winddir_16_point}\t#{winddir_degree}\t#{windspeed_kmph}\t#{windspeed_miles}\t#{weather_icon_url}\n"
     f = File.new(DATA_DIR+normalize_filename(locality), "a+")
     f.write(dataline)
-    f.close    
+    f.close
   end
+
+  def create_database
+    @rrd = RRD::Base.new("public/data/rrd/Trencin_Slovakia.rrd")
+      rrd.create :start => Time.now - 10.seconds, :step => 20.minutes do
+      datasource 'temp_c', :type => :gauge, :heartbeat => 20.minutes, :min => -70, :max => 50
+      datasource 'humidity', :type => :gauge, :heartbeat => 20.minutes, :min => 0, :max => 100
+      datasource 'pressure', :type => :gauge, :heartbeat => 20.minutes, :min => 850, :max => 1100
+      archive :average, :every => 20.minutes, :during => 1.year
+    end
+  end
+
+  def add_value
+    p @observation_time
+    p @temp_c
+    p @humidity
+    p @pressure
+    @rrd.update @observation_time, @temp_c, @humidity, @pressure
+  end
+
 end
 
 class Weather
@@ -119,9 +142,11 @@ class Weather
     @longitude = data["search_api"]["result"][0]["longitude"]
     @population = data["search_api"]["result"][0]["population"]
     @weatherUrl = data["search_api"]["result"][0]["weatherUrl"][0]["value"]
-  end  
+  end
 end
 
-Trencin = Collector.new("Trencin,Slovakia")
-Trencin.get_values
-Trencin.save_values
+collector = Collector.new("Trencin,Slovakia")
+collector.get_values
+#collector.save_values_to_file
+collector.create_database
+collector.add_value

@@ -5,6 +5,7 @@ require 'erb'
 require 'parseconfig'
 require 'yaml'
 require 'cgi'
+require 'rrd'
 
 config = ParseConfig.new('./web_weather_graph.conf')
 KEY = config.params['datasource']['key']
@@ -98,7 +99,7 @@ end
 class WebWeatherGraph < Sinatra::Base
   set :static, true
   set :logging, true
-  set :public, File.dirname(__FILE__) + '/static'
+  set :public, File.dirname(__FILE__) + '/public'
   set :views, File.dirname(__FILE__) + '/views'
 
 # Need I do this? -> I don't know... (to not create a new instance for all time)
@@ -109,27 +110,25 @@ class WebWeatherGraph < Sinatra::Base
   end
 
   get '/' do  
-#     if params[:locality] == nil 
-#        locality = "Trencin,Slovakia" 
-#      else
-       p  locality = params[:locality]
-       locality=nil 
-       params[:locality]=nil
-
-#      end
-#      p locality
-#      @weather.get_data(locality)
-#     @weather.add_to_collector(locality)
-
     erb :index
   end
 
-  post '/get_localities' do
-    @localities = @weather.get_localities(params[:query])
-    erb :get_localities
+#  post '/get_localities' do
+#    @localities = @weather.get_localities(params[:query])
+#    erb :get_localities
+#  end
+#
+#  post 'select_locality' do
+#    p locality = params[:locality]
+#  end
+
+  get '/graph' do
+    RRD.graph "public/graphs/Trencin_Slovakia.png", :title => 'Test', :width => 400 , :height => 100, :color => ["FONT#000000", "BACK#FFFFFF"] do
+      area 'data/rrd/Trencin_Slovakia.rrd', :temp_c => :average, :color => "#00FF00", :label => 'Temperature'
+      line 'data/rrd/Trencin_Slovakia.rrd', :humidity => :average, :color => "#007f3f", :label => 'Humidity'
+      line 'data/rrd/Trencin_Slovakia.rrd', :pressure => :average, :color => "#0000FF", :label => "Pressure"
+    end
+    erb :graph
   end
 
-  post 'select_locality' do
-    p locality = params[:locality]
-  end
 end
