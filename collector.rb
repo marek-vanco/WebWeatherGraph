@@ -14,7 +14,7 @@ DATA_DIR = "data/"
 class Collector
 
   attr_accessor :rrd
-  attr_accessor :locality, :url, :local_time 
+  attr_accessor :locality, :url 
   attr_accessor :observation_time, :cloudcover, :humidity, :precip_mm, :presure, :temp_c, :temp_f, :visibility, :weather_code, :weather_desc, 
                 :weather_icon_url, :winddir_16_point, :winddir_degree, :windspeed_kmph, :windspeed_miles 
   attr_accessor :date, :temp_max_c, :temp_max_f, :temp_min_c, :temp_min_f, :day_weather_code, :day_weather_desc, :day_weather_icon_url, 
@@ -46,7 +46,6 @@ class Collector
         hour = hour+12
       end
 
-      local_time = Time.now
       return Time.utc(year,mounth,day,hour,minute)
     end
 
@@ -98,28 +97,32 @@ class Collector
   end
 
   def save_values_to_file
-    p dataline = "#{@observation_time}\t#{weather_code}\t#{temp_c}\t#{temp_f}\t#{humidity}\t#{presure}\t#{precip_mm}\t#{cloudcover}\t#{visibility}\t#{winddir_16_point}\t#{winddir_degree}\t#{windspeed_kmph}\t#{windspeed_miles}\t#{weather_icon_url}\n"
+    dataline = "#{@observation_time}\t#{weather_code}\t#{temp_c}\t#{temp_f}\t#{humidity}\t#{presure}\t#{precip_mm}\t#{cloudcover}\t#{visibility}\t#{winddir_16_point}\t#{winddir_degree}\t#{windspeed_kmph}\t#{windspeed_miles}\t#{weather_icon_url}\n"
     f = File.new(DATA_DIR+normalize_filename(locality), "a+")
     f.write(dataline)
     f.close
   end
 
   def create_database
-    @rrd = RRD::Base.new("public/data/rrd/Trencin_Slovakia.rrd")
-      rrd.create :start => Time.now - 10.seconds, :step => 20.minutes do
-      datasource 'temp_c', :type => :gauge, :heartbeat => 20.minutes, :min => -70, :max => 50
-      datasource 'humidity', :type => :gauge, :heartbeat => 20.minutes, :min => 0, :max => 100
-      datasource 'pressure', :type => :gauge, :heartbeat => 20.minutes, :min => 850, :max => 1100
-      archive :average, :every => 20.minutes, :during => 1.year
+    @rrd = RRD::Base.new("data/rrd/Trencin_Slovakia.rrd")
+
+    unless File.exist? ("data/rrd/Trencin_Slovakia.rrd")
+      @rrd.create :start => Time.now.utc - 1.hour, :step => 20.minutes do
+        datasource 'temp_c', :type => :gauge, :heartbeat => 40.minutes, :min => -70, :max => 50
+        datasource 'humidity', :type => :gauge, :heartbeat => 40.minutes, :min => 0, :max => 100
+        datasource 'pressure', :type => :gauge, :heartbeat => 40.minutes, :min => 850, :max => 1100
+        archive :average, :every => 20.minutes, :during => 1.day
+        archive :average, :every => 1.hour, :during => 1.week
+        archive :average, :every => 1.day, :during => 1.month
+        archive :average, :every => 1.week, :during => 1.year
+      end
     end
+  
   end
 
   def add_value
-    p @observation_time
-    p @temp_c
-    p @humidity
-    p @pressure
-    @rrd.update @observation_time, @temp_c, @humidity, @pressure
+    @rrd.update(@observation_time, @temp_c.to_i, @humidity.to_i, @pressure.to_i)
+    # @rrd.fetch(:average).each {|line| puts line.inspect}
   end
 
 end
@@ -134,7 +137,7 @@ class Weather
     open(@url).each do |line|
       rawdata << line
     end
-    p data = JSON.parse(rawdata)
+    data = JSON.parse(rawdata)
     
     @city = data["search_api"]["result"][0]["areaName"][0]["value"]
     @country = data["search_api"]["result"][0]["country"][0]["value"]

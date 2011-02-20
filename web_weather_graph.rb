@@ -123,10 +123,21 @@ class WebWeatherGraph < Sinatra::Base
 #  end
 
   get '/graph' do
-    RRD.graph "public/graphs/Trencin_Slovakia.png", :title => 'Test', :width => 400 , :height => 100, :color => ["FONT#000000", "BACK#FFFFFF"] do
-      area 'data/rrd/Trencin_Slovakia.rrd', :temp_c => :average, :color => "#00FF00", :label => 'Temperature'
-      line 'data/rrd/Trencin_Slovakia.rrd', :humidity => :average, :color => "#007f3f", :label => 'Humidity'
-      line 'data/rrd/Trencin_Slovakia.rrd', :pressure => :average, :color => "#0000FF", :label => "Pressure"
+#    myrrd = RRD::Base.new("data/rrd/Trencin_Slovakia.rrd")
+#      p RRD::Wrapper.last_update "data/rrd/Trencin_Slovakia.rrd"
+
+    RRD.graph "public/graphs/Trencin_Slovakia_temperature.png", :title => 'Temperature', :width => 400, :height => 100, :color => ["FONT#000000", "BACK#FFFFFF"] do 
+        area 'data/rrd/Trencin_Slovakia.rrd', :temp_c => :average, :color => "#FF0000", :label => 'Temperature' 
+      end
+#
+    RRD.graph "public/graphs/Trencin_Slovakia_pressure.png", :title => 'Pressure', :width => 400, :height => 100, :color => ["FONT#000000", "BACK#FFFFFF"] do 
+        area 'data/rrd/Trencin_Slovakia.rrd', :pressure => :average, :color => "#00FF00", :label => 'Pressure' 
+#        line 'data/rrd/Trencin_Slovakia.rrd', :pressure => :average, :color => "#0000FF", :label => "Pressure"
+    end
+
+    RRD.graph "public/graphs/Trencin_Slovakia_humidity.png", :title => 'Humidity', :width => 400, :height => 100, :color => ["FONT#000000", "BACK#FFFFFF"] do 
+        area 'data/rrd/Trencin_Slovakia.rrd', :humidity => :average, :color => "#0000FF", :label => 'Humidity' 
+#       line 'data/rrd/Trencin_Slovakia.rrd', :humidity => :average, :color => "#007f3f", :label => 'Humidity'
     end
     erb :graph
   end
