@@ -104,18 +104,21 @@ class Collector
   end
 
   def create_database
-    @rrd = RRD::Base.new("data/rrd/Trencin_Slovakia.rrd")
+    @rrd = RRD::Base.new("data/rrd/Trencin_Slovakia2.rrd")
 
-    unless File.exist? ("data/rrd/Trencin_Slovakia.rrd")
+    unless File.exist? ("data/rrd/Trencin_Slovakia2.rrd")
       @rrd.create :start => Time.now.utc - 1.hour, :step => 20.minutes do
-        datasource 'temp_c', :type => :gauge, :heartbeat => 40.minutes, :min => -70, :max => 50
-        datasource 'humidity', :type => :gauge, :heartbeat => 40.minutes, :min => 0, :max => 100
-        datasource 'pressure', :type => :gauge, :heartbeat => 40.minutes, :min => 850, :max => 1100
+        datasource 'temp_c', :type => :gauge, :heartbeat => 30.minutes, :min => -70, :max => 50
+        datasource 'humidity', :type => :gauge, :heartbeat => 30.minutes, :min => 0, :max => 100
+        datasource 'pressure', :type => :gauge, :heartbeat => 30.minutes, :min => 850, :max => 1100
         archive :average, :every => 20.minutes, :during => 1.day
-        archive :average, :every => 1.hour, :during => 1.week
         archive :average, :every => 1.day, :during => 1.month
         archive :average, :every => 1.week, :during => 1.year
       end
+
+    RRD::Wrapper.create("test.rrd", "--step", "300", "DS:test:COUNTER:1800:0:4294967295", "RRA:AVERAGE:0.5:1:20", "RRA:AVERAGE:0.5:1:40")
+
+
     end
   
   end
@@ -147,6 +150,7 @@ class Weather
     @weatherUrl = data["search_api"]["result"][0]["weatherUrl"][0]["value"]
   end
 end
+
 
 collector = Collector.new("Trencin,Slovakia")
 collector.get_values
